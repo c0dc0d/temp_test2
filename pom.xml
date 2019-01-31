@@ -16,6 +16,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<db2.driver.version>10.0</db2.driver.version>
 	</properties>
 
 	<dependencies>
@@ -47,11 +48,42 @@
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-activemq</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-broker</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 
-	</dependencies>
+
+
+
+        <dependency>
+            <groupId>com.ibm.db2.jdbc</groupId>
+            <artifactId>jcc-driver</artifactId>
+            <version>${db2.driver.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ibm.db2.jdbc</groupId>
+            <artifactId>jcc-driver-license-cu</artifactId>
+            <version>${db2.driver.version}</version>
+        </dependency>
+
+
+
+    </dependencies>
 
 	<build>
 		<plugins>
