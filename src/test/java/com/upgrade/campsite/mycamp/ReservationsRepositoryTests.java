@@ -1,12 +1,14 @@
 package com.upgrade.campsite.mycamp;
 
-import com.upgrade.campsite.mycamp.repository.Reservation;
+import com.upgrade.campsite.mycamp.model.Reservation;
 import com.upgrade.campsite.mycamp.repository.ReservationsRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -19,8 +21,6 @@ public class ReservationsRepositoryTests {
 
     @Test
     public void testSave() {
-        LocalDateTime now = LocalDateTime.now();
-        reservationsRepository.save(Reservation.builder().beginDateReservation(now).version(UUID.randomUUID()).build());
     }
 
 }
