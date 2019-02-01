@@ -6,13 +6,18 @@ import com.upgrade.campsite.mycamp.model.Reservation;
 import com.upgrade.campsite.mycamp.repository.ReservationsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.jms.*;
 import java.util.UUID;
 
 @Service
 public class ReservationService {
+
+    private static final String JMSX_GROUP_ID = "JMSXGroupID";
+    private static final String MY_CAMP_QUEUE_GROUP_NAME = "MyCampGroupQueue";
 
     @Autowired
     private ReservationsRepository reservationsRepository;
@@ -29,7 +34,15 @@ public class ReservationService {
     @Transactional
     public Reservation sendProcessing(Reservation reservation) {
         Reservation reservationSaved = createReservationPending(reservation);
-        jmsTemplate.convertAndSend(ReservationReceiver.RESERVATION_QUEUE_NAME, reservationSaved);
+        jmsTemplate.convertAndSend(ReservationReceiver.RESERVATION_QUEUE_NAME, new MessageCreator() {
+            @Override
+            public Message createMessage(Session session) throws JMSException {
+                ObjectMessage om = session.createObjectMessage();
+                om.setObject(reservationSaved);
+                om.setStringProperty(JMSX_GROUP_ID, MY_CAMP_QUEUE_GROUP_NAME);
+                return om;
+            }
+        });
         return reservationSaved;
     }
 
