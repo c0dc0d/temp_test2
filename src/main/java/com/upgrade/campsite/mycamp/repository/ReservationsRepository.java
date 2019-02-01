@@ -15,7 +15,7 @@ public interface ReservationsRepository extends JpaRepository<Reservation, Long>
     @Query(" select 1 from Reservation rsv where " +
             " rsv.statusReservation = '"+ StatusCodeReservation.CODE_STATUS_CONFIRMED_RESERVATION +"' "+
             "and ((rsv.arrivalDate  = :arrivalDate or rsv.departureDate = :departureDate) " +
-            "or (:arrivalDate between rsv.arrivalDate and rsv.departureDate or :departureDate between rsv.arrivalDate and rsv.departureDate) " +
+            "or ((:arrivalDate >= rsv.arrivalDate and :arrivalDate < rsv.departureDate ) or (:departureDate > rsv.arrivalDate and :departureDate <= rsv.departureDate)) " +
             "or (:arrivalDate < rsv.arrivalDate and :departureDate > rsv.departureDate))")
     Integer existsReservation(@Param("arrivalDate") Date arrivalDate, @Param("departureDate") Date departureDate);
 
