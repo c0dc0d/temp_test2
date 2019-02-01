@@ -34,14 +34,11 @@ public class ReservationService {
     @Transactional
     public Reservation sendProcessing(Reservation reservation) {
         Reservation reservationSaved = createReservationPending(reservation);
-        jmsTemplate.convertAndSend(ReservationReceiver.RESERVATION_QUEUE_NAME, new MessageCreator() {
-            @Override
-            public Message createMessage(Session session) throws JMSException {
-                ObjectMessage om = session.createObjectMessage();
-                om.setObject(reservationSaved);
-                om.setStringProperty(JMSX_GROUP_ID, MY_CAMP_QUEUE_GROUP_NAME);
-                return om;
-            }
+        jmsTemplate.send(ReservationReceiver.RESERVATION_QUEUE_NAME, session -> {
+            ObjectMessage om = session.createObjectMessage();
+            om.setObject(reservationSaved);
+            om.setStringProperty(JMSX_GROUP_ID, MY_CAMP_QUEUE_GROUP_NAME);
+            return om;
         });
         return reservationSaved;
     }
