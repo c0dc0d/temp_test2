@@ -1,5 +1,6 @@
 package com.upgrade.campsite.mycamp.jms;
 
+import com.upgrade.campsite.mycamp.constants.StatusCodeReservation;
 import com.upgrade.campsite.mycamp.model.Reservation;
 import com.upgrade.campsite.mycamp.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +19,9 @@ public class ReservationReceiver {
     public void receiver(Reservation reservation) {
         Integer numberOfReservations = reservationService.existsReservation(reservation);
         if(numberOfReservations != null && numberOfReservations > 0) {
-            reservationService.turnReservationsDenied(reservation);
+            reservationService.changeReservationsStatus(reservation, StatusCodeReservation.CODE_STATUS_DENIED_RESERVATION);
         }else {
-            reservationService.turnReservationConfirmed(reservation);
+            reservationService.changeReservationsStatus(reservation, StatusCodeReservation.CODE_STATUS_ACCEPT_RESERVATION);
         }
     }
 

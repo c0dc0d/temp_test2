@@ -4,9 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.UUID;
 
 @Entity
 @Table(name = "reservations", schema = "mycamp")
@@ -29,9 +27,9 @@ public class Reservation implements Serializable {
 
     private String statusReservation;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "user_id")
     private User user;
 
-    private UUID version;
+    private String numberOfReservation;
 }
