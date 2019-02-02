@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "users", schema = "mycamp")
+@Table(name = "users")
 @Getter
 @Setter
 @Builder
@@ -22,6 +22,7 @@ public class User implements Serializable {
     @NotNull
     private String fullName;
 
+    @Column(unique = true)
     @NotNull
     private String email;
 

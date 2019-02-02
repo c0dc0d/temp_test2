@@ -1,4 +1,4 @@
-package com.upgrade.campsite.mycamp.constants;
+package com.upgrade.campsite.mycamp.exceptions;
 
 public class BusinessException extends Exception {
 

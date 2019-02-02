@@ -1,13 +1,11 @@
 package com.upgrade.campsite.mycamp.controllers;
 
-import com.upgrade.campsite.mycamp.constants.BusinessException;
+import com.upgrade.campsite.mycamp.exceptions.BusinessException;
 import com.upgrade.campsite.mycamp.model.Reservation;
+import com.upgrade.campsite.mycamp.model.ReservationsAlterationDto;
 import com.upgrade.campsite.mycamp.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,7 +16,7 @@ public class ReservationController {
     private ReservationService reservationService;
 
     @PostMapping
-    public ResponseEntity createReservation(@RequestBody Reservation reservation) {
+    public ResponseEntity createReservation(@RequestBody Reservation reservation) throws BusinessException {
         return ResponseEntity
                 .accepted()
                 .body(reservationService.sendProcessing(reservation));
@@ -32,6 +30,19 @@ public class ReservationController {
     @GetMapping("{numberOfReservation}")
     public ResponseEntity findReservation(@PathVariable String numberOfReservation) {
         return ResponseEntity.ok(reservationService.findByNumberOfReservation(numberOfReservation));
+    }
+
+    @GetMapping("{numberOfReservation}/status")
+    public ResponseEntity findStatusReservationAcceptance(@PathVariable String numberOfReservation) {
+        return ResponseEntity.ok(reservationService.findStatusReservationAcceptance(numberOfReservation));
+    }
+
+    @PutMapping("/alteration")
+    public ResponseEntity modidyReservation(@RequestBody ReservationsAlterationDto reservationsAlterationDto) throws BusinessException {
+        return ResponseEntity.accepted()
+                .body(reservationService
+                        .changeReservation(reservationsAlterationDto.getNumberOfReservation(),
+                                reservationsAlterationDto.getNewArrivalDate(), reservationsAlterationDto.getNewDepartureDate()));
     }
 
 }

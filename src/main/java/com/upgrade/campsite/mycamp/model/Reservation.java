@@ -1,13 +1,12 @@
 package com.upgrade.campsite.mycamp.model;
 
 import lombok.*;
-
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "reservations", schema = "mycamp")
+@Table(name = "reservations")
 @Getter
 @Setter
 @Builder
@@ -20,16 +19,18 @@ public class Reservation implements Serializable {
     private Long id;
 
     @Column(nullable = false)
-    private Date arrivalDate;
+    private LocalDate arrivalDate;
 
     @Column(nullable = false)
-    private Date departureDate;
+    private LocalDate departureDate;
 
+    @Column(nullable = false)
     private String statusReservation;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(nullable = false)
     private String numberOfReservation;
 }
