@@ -22,7 +22,6 @@ public class User implements Serializable {
     @NotNull
     private String fullName;
 
-    @Column(unique = true)
     @NotNull
     private String email;
 

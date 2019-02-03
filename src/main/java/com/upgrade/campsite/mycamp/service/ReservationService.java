@@ -39,9 +39,6 @@ public class ReservationService {
     private ReservationPeriodAvailableService reservationPeriodAvailableService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private JmsTemplate jmsTemplate;
 
     public Reservation findByNumberOfReservation(String numberOfReservation) {
@@ -51,12 +48,6 @@ public class ReservationService {
     public Reservation createReservationPending(Reservation reservation) {
         reservation.setNumberOfReservation(UUID.randomUUID().toString());
         reservation.setStatusReservation(StatusCodeReservation.CODE_STATUS_PENDING_RESERVATION);
-        if(reservation.getUser() != null && !StringUtils.isEmpty(reservation.getUser().getEmail())) {
-            User userByEmail = userService.findByEmail(reservation.getUser().getEmail());
-            if(userByEmail != null) {
-                reservation.setUser(userByEmail);
-            }
-        }
         return reservationsRepository.save(reservation);
     }
 
