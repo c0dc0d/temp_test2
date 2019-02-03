@@ -25,4 +25,6 @@ public class ReservationPeriodAvailable implements Serializable {
     @Column(nullable = false)
     private LocalDate finalDateAvailable;
 
+    private String statusAvailable;
+
 }

@@ -21,7 +21,7 @@ public class ReservationPeriodAvailableService {
         return reservationPeriodAvailableRepository.save(reservationPeriodAvailable);
     }
 
-    public List<ReservationPeriodAvailable> findAvailablePeriod(LocalDate arrivalDate, LocalDate departureDate) {
+    public ReservationPeriodAvailable findAvailablePeriod(LocalDate arrivalDate, LocalDate departureDate) {
         return reservationPeriodAvailableRepository.findAvailablePeriod(arrivalDate, departureDate);
     }
 

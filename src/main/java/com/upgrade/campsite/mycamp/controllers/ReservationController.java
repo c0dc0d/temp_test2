@@ -33,7 +33,7 @@ public class ReservationController {
     }
 
     @GetMapping("{numberOfReservation}/status")
-    public ResponseEntity findStatusReservationAcceptance(@PathVariable String numberOfReservation) {
+    public ResponseEntity findStatusReservationAcceptance(@PathVariable String numberOfReservation) throws BusinessException {
         return ResponseEntity.ok(reservationService.findStatusReservationAcceptance(numberOfReservation));
     }
 

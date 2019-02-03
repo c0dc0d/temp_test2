@@ -6,22 +6,15 @@ import com.upgrade.campsite.mycamp.jms.ReservationReceiver;
 import com.upgrade.campsite.mycamp.model.Reservation;
 import com.upgrade.campsite.mycamp.model.ReservationPeriodAvailable;
 import com.upgrade.campsite.mycamp.model.ReservationsStatusDto;
-import com.upgrade.campsite.mycamp.model.User;
-import com.upgrade.campsite.mycamp.repository.ReservationPeriodAvailableRepository;
 import com.upgrade.campsite.mycamp.repository.ReservationRepository;
-import com.upgrade.campsite.mycamp.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import javax.jms.*;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -43,9 +36,6 @@ public class ReservationService {
     @Autowired
     private JmsTemplate jmsTemplate;
 
-    @Autowired
-    private DateUtils dateUtils;
-
     public Reservation findByNumberOfReservation(String numberOfReservation) {
         return reservationsRepository.findByNumberOfReservation(numberOfReservation);
     }
@@ -53,7 +43,8 @@ public class ReservationService {
     private Reservation createReservationPending(Reservation reservation) {
         reservation.setNumberOfReservation(UUID.randomUUID().toString());
         reservation.setStatusReservation(StatusCodeReservation.CODE_STATUS_PENDING_RESERVATION);
-        return reservationsRepository.save(reservation);
+        reservationsRepository.save(reservation);
+        return reservation;
     }
 
     @Transactional
@@ -105,18 +96,15 @@ public class ReservationService {
         if(rsvByNumberOfReservation != null) {
             rsvByNumberOfReservation.setStatusReservation(StatusCodeReservation.CODE_STATUS_CANCEL_RESERVATION);
         }else {
-            throw new BusinessException(String.format(THE_RESERVATION_WASNT_FOUND,numberOfReservation));
+            throw new BusinessException(String.format(THE_RESERVATION_WASNT_FOUND, numberOfReservation));
         }
         return rsvByNumberOfReservation;
     }
 
-    public ReservationsStatusDto findStatusReservationAcceptance(String numberOfReservation) {
+    public ReservationsStatusDto findStatusReservationAcceptance(String numberOfReservation) throws BusinessException {
         Reservation rscByNumberOfReservation = reservationsRepository.findByNumberOfReservation(numberOfReservation);
         if(rscByNumberOfReservation == null) {
-            return ReservationsStatusDto
-                .builder()
-                .numberOfReservation(numberOfReservation)
-                .reservationAcceptance(Boolean.FALSE).build();
+            throw new BusinessException(String.format(THE_RESERVATION_WASNT_FOUND, numberOfReservation));
         }
         return ReservationsStatusDto
                 .builder()
@@ -128,20 +116,22 @@ public class ReservationService {
     }
 
     private void validationOfValidRageDateOfCamp(LocalDate arrivalDate, LocalDate departureDate) throws BusinessException {
-        long days = Period.between(arrivalDate ,departureDate).getDays();
+        long days = Math.abs(ChronoUnit.DAYS.between(arrivalDate ,departureDate));
         if(days > LIMIT_OF_DATE_FOR_RESERVATIONS) {
             throw new BusinessException("The reservations exceeded the limit of permanence");
         }
     }
 
-    private void validationOfReservationCanDone(LocalDate arrivalDate) throws BusinessException {
-        long days = ChronoUnit.DAYS.between(dateUtils.getNowDate(), arrivalDate);
-        if(days < MINOR_LIMIT_OF_DAYS_TO_MAKE_RESERVATIONS) {
+    private void validationOfReservationCanDone(LocalDate arrivalDate, LocalDate departureDate) throws BusinessException {
+        ReservationPeriodAvailable availablePeriod =
+                reservationPeriodAvailableService.findAvailablePeriod(arrivalDate, departureDate);
+        long between = Math.abs(ChronoUnit.DAYS.between(availablePeriod.getFirstDateAvailable(), arrivalDate));
+        if(between < MINOR_LIMIT_OF_DAYS_TO_MAKE_RESERVATIONS) {
             throw new BusinessException(
                     String.format("The reservations exceeded the minor limit (minor limit: %d day ahead of arrival) to make reservations",
                             MINOR_LIMIT_OF_DAYS_TO_MAKE_RESERVATIONS - 1));
         }
-        if(days > MAJOR_LIMIT_OF_DAYS_TO_MAKE_RESERVATIONS) {
+        if(between > MAJOR_LIMIT_OF_DAYS_TO_MAKE_RESERVATIONS) {
             throw new BusinessException(
                     String.format("The reservations exceeded the major limit (major limit: %d days in advance) to make reservations",
                             MAJOR_LIMIT_OF_DAYS_TO_MAKE_RESERVATIONS));
@@ -151,12 +141,12 @@ public class ReservationService {
     private void validationsReservations(LocalDate arrivalDate, LocalDate departureDate) throws BusinessException {
         validationDatePeriodReservationAvailable(arrivalDate, departureDate);
         validationOfValidRageDateOfCamp(arrivalDate, departureDate);
-        validationOfReservationCanDone(arrivalDate);
+        validationOfReservationCanDone(arrivalDate, departureDate);
     }
 
     private void validationDatePeriodReservationAvailable(LocalDate arrivalDate, LocalDate departureDate) throws BusinessException {
-        List<ReservationPeriodAvailable> availablePeriod = reservationPeriodAvailableService.findAvailablePeriod(arrivalDate, departureDate);
-        if(CollectionUtils.isEmpty(availablePeriod)) {
+        ReservationPeriodAvailable availablePeriod = reservationPeriodAvailableService.findAvailablePeriod(arrivalDate, departureDate);
+        if(availablePeriod == null) {
             throw new BusinessException("The period of reservation isn't available");
         }
     }
