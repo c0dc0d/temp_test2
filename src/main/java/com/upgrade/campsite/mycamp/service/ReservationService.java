@@ -9,6 +9,7 @@ import com.upgrade.campsite.mycamp.model.ReservationsStatusDto;
 import com.upgrade.campsite.mycamp.model.User;
 import com.upgrade.campsite.mycamp.repository.ReservationPeriodAvailableRepository;
 import com.upgrade.campsite.mycamp.repository.ReservationRepository;
+import com.upgrade.campsite.mycamp.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import org.springframework.util.StringUtils;
 
 import javax.jms.*;
 import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -41,11 +43,14 @@ public class ReservationService {
     @Autowired
     private JmsTemplate jmsTemplate;
 
+    @Autowired
+    private DateUtils dateUtils;
+
     public Reservation findByNumberOfReservation(String numberOfReservation) {
         return reservationsRepository.findByNumberOfReservation(numberOfReservation);
     }
 
-    public Reservation createReservationPending(Reservation reservation) {
+    private Reservation createReservationPending(Reservation reservation) {
         reservation.setNumberOfReservation(UUID.randomUUID().toString());
         reservation.setStatusReservation(StatusCodeReservation.CODE_STATUS_PENDING_RESERVATION);
         return reservationsRepository.save(reservation);
@@ -130,7 +135,7 @@ public class ReservationService {
     }
 
     private void validationOfReservationCanDone(LocalDate arrivalDate) throws BusinessException {
-        long days = Period.between(LocalDate.now(), arrivalDate).getDays();
+        long days = ChronoUnit.DAYS.between(dateUtils.getNowDate(), arrivalDate);
         if(days < MINOR_LIMIT_OF_DAYS_TO_MAKE_RESERVATIONS) {
             throw new BusinessException(
                     String.format("The reservations exceeded the minor limit (minor limit: %d day ahead of arrival) to make reservations",
