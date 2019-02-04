@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface ReservationRepository extends CrudRepository<Reservation, Long> {
@@ -20,4 +21,6 @@ public interface ReservationRepository extends CrudRepository<Reservation, Long>
     Integer existsReservation(@Param("arrivalDate") LocalDate arrivalDate, @Param("departureDate") LocalDate departureDate);
 
     Reservation findByNumberOfReservation(String numberOfReservation);
+
+    List<Reservation> findByStatusReservationOrderByArrivalDateAsc(String statusReservation);
 }

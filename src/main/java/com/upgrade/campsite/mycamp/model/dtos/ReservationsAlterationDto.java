@@ -1,6 +1,8 @@
-package com.upgrade.campsite.mycamp.model;
+package com.upgrade.campsite.mycamp.model.dtos;
 
 import lombok.*;
+
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Getter
@@ -8,7 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ReservationsAlterationDto {
+public class ReservationsAlterationDto implements Serializable {
 
     private String numberOfReservation;
     private LocalDate newArrivalDate;

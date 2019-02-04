@@ -3,7 +3,7 @@ package com.upgrade.campsite.mycamp;
 import com.upgrade.campsite.mycamp.constants.StatusCodeReservation;
 import com.upgrade.campsite.mycamp.exceptions.BusinessException;
 import com.upgrade.campsite.mycamp.model.Reservation;
-import com.upgrade.campsite.mycamp.model.ReservationsStatusDto;
+import com.upgrade.campsite.mycamp.model.dtos.ReservationsStatusDto;
 import com.upgrade.campsite.mycamp.repository.ReservationRepository;
 import com.upgrade.campsite.mycamp.service.ReservationPeriodAvailableService;
 import com.upgrade.campsite.mycamp.service.ReservationService;

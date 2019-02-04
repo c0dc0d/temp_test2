@@ -2,7 +2,7 @@ package com.upgrade.campsite.mycamp.controllers;
 
 import com.upgrade.campsite.mycamp.exceptions.BusinessException;
 import com.upgrade.campsite.mycamp.model.Reservation;
-import com.upgrade.campsite.mycamp.model.ReservationsAlterationDto;
+import com.upgrade.campsite.mycamp.model.dtos.ReservationsAlterationDto;
 import com.upgrade.campsite.mycamp.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

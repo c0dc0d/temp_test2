@@ -5,7 +5,7 @@ import com.upgrade.campsite.mycamp.constants.StatusCodeReservation;
 import com.upgrade.campsite.mycamp.jms.ReservationReceiver;
 import com.upgrade.campsite.mycamp.model.Reservation;
 import com.upgrade.campsite.mycamp.model.ReservationPeriodAvailable;
-import com.upgrade.campsite.mycamp.model.ReservationsStatusDto;
+import com.upgrade.campsite.mycamp.model.dtos.ReservationsStatusDto;
 import com.upgrade.campsite.mycamp.repository.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.jms.*;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -151,4 +152,7 @@ public class ReservationService {
         }
     }
 
+    public List<Reservation> findReservationsAccepted() {
+        return reservationsRepository.findByStatusReservationOrderByArrivalDateAsc(StatusCodeReservation.CODE_STATUS_ACCEPT_RESERVATION);
+    }
 }

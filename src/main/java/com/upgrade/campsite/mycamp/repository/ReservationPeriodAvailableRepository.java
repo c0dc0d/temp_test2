@@ -17,4 +17,6 @@ public interface ReservationPeriodAvailableRepository extends CrudRepository<Res
     ReservationPeriodAvailable findAvailablePeriod(@Param("arrivalDate") LocalDate arrivalDate,
                                                          @Param("departureDate") LocalDate departureDate);
 
+
+    ReservationPeriodAvailable findByStatusAvailable(String statusAvailable);
 }
