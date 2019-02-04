@@ -8,7 +8,6 @@ import com.upgrade.campsite.mycamp.repository.ReservationPeriodAvailableReposito
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -32,12 +31,6 @@ public class ReservationPeriodAvailableService {
 
     public ReservationPeriodAvailable findAvailablePeriod(LocalDate arrivalDate, LocalDate departureDate) {
         return reservationPeriodAvailableRepository.findAvailablePeriod(arrivalDate, departureDate);
-    }
-
-    public List<ReservationPeriodAvailable> findAll() {
-        List<ReservationPeriodAvailable> listPeriod = new ArrayList<>();
-        reservationPeriodAvailableRepository.findAll().forEach(rpa -> listPeriod.add(rpa));
-        return listPeriod;
     }
 
     public List<PeriodReservationDto> findPeriodsAvailableByRangeDate(LocalDate startDate, LocalDate finalDate) throws BusinessException {
