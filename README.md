@@ -1,36 +1,26 @@
 # MyCamp
 
-The project is built in Spring Boot technology, exposing the Rest API and H2 Database.
+The project is built in Spring Boot technology, exposing the Rest API using to persistence data with H2 Database.
 
-Using ActimeMQ to processing on Queue the registration of reservations.
+Using ActiveMQ to processing on Queue the registration of reservations.
 
 To run the project can run:
 ```
 mvn spring-boot:run
 ```
 
-The endpoints expose are:
+##The endpoints exposes are:
 
-To create a period available should use:
-Post Method:
-### http://localhost:8080/api/reservation-periods
-```
-{
-    "firstDateAvailable": "2019-03-01",
-    "finalDateAvailable": "2019-03-30",
-    "statusAvailable": "Y"
-}
-```
-To find a period available should use:
-Get Method:
-### http://localhost:8080/api/reservation-periods/:numberOfReservation?startDate=YYYY-MM-DD&finalDate=YYYY-MM-DD
- - numberOfReservation:A number of a reservation registred
+####To find a period available should use:
+Get Method: 
+http://localhost:8080/api/reservation-periods?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD
  - startDate: first date of the range pattern YYYY-MM-DD
- - finalDate: last date of the range pattern YYYY-MM-DD
+ - endDate: last date of the range pattern YYYY-MM-DD
 
-To create a reservation:
+#### To create a reservation:
+
 Post Method:
-### http://localhost:8080/api/reservations
+http://localhost:8080/api/reservations
 Body Request example:
 ```
 {
@@ -42,16 +32,28 @@ Body Request example:
     }
 }
 ```
-To cancel one reservation should use:
-### http://localhost:8080/api/reservations/:numberOfReservation/cancellations
- - numberOfReservation: A number of reservation registred in data base
+####To cancel one reservation should use:
 
-To get a status of reservations should use:
-### http://localhost:8080/api/reservations/:numberOfReservation/status
- - numberOfReservation: number of reservation registred in data base
+Put method:
+http://localhost:8080/api/reservations/:numberOfReservation/cancellations
+ - numberOfReservation: A number of reservation registered in data base
 
-To change a reservation should use:
-### http://localhost:8080/api/reservations/:numberOfReservation/alterations?startDate=YYYY-MM-DD&finalDate=YYYY-MM-DD
+#### To get a status of reservations should use:
+
+When a reservation is created and it goes to the queue to processing, this endpoint was created to know the status of the reservations on the flow.
+
+Get method:
+http://localhost:8080/api/reservations/:numberOfReservation/status
+
+ - numberOfReservation: number of reservation registered in data base
+
+#### To change a reservation should use:
+
+Put method:
+http://localhost:8080/api/reservations/:numberOfReservation/alterations?arrivalDate=YYYY-MM-DD&departureDate=YYYY-MM-DD
+ - numberOfReservation: number of reservation registered in data base
+ - arrivalDate: Date of arrival
+ - departureDate: Date of departure
 
 ## Acknowledgments
 
