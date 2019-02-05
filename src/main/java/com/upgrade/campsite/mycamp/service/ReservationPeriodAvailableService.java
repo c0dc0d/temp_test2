@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 public class ReservationPeriodAvailableService {
 
-    public static final String STATUS_AVAILABLE = "Y";
+    private static final String STATUS_AVAILABLE = "Y";
 
     @Autowired
     private ReservationPeriodAvailableRepository reservationPeriodAvailableRepository;
@@ -34,7 +34,8 @@ public class ReservationPeriodAvailableService {
     }
 
     public List<PeriodReservationDto> findPeriodsAvailableByRangeDate(LocalDate startDate, LocalDate finalDate) throws BusinessException {
-        emptyDatesHandling(startDate, finalDate);
+        startDate = emptyStartDateHandling(startDate);
+        finalDate = emptyFinalDateHandling(startDate, finalDate);
         checkRangeInsideAvailablePeriodDate(startDate, finalDate);
         List<Reservation> reservationsByNumberOfReservation = reservationService.findReservationsAccepted();
         List<PeriodReservationDto> freePeriods = new ArrayList<>();
@@ -88,13 +89,18 @@ public class ReservationPeriodAvailableService {
         }
     }
 
-    private static void emptyDatesHandling(LocalDate startDate, LocalDate finalDate) {
+    private LocalDate emptyStartDateHandling(LocalDate startDate) {
         if(startDate == null) {
-            startDate = LocalDate.now();
+            return  LocalDate.now();
         }
+        return startDate;
+    }
+
+    private LocalDate emptyFinalDateHandling(LocalDate startDate, LocalDate finalDate) {
         if(finalDate == null) {
-            finalDate = startDate.plusDays(30);
+            return  startDate.plusDays(30);
         }
+        return finalDate;
     }
 
     private boolean isBetween(LocalDate day, LocalDate startDate, LocalDate finalDate) {
