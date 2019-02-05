@@ -23,7 +23,7 @@ Post Method:
 ```
 To find a period available should use:
 Get Method:
-###http://localhost:8080/api/reservation-periods/:numberOfReservation?startDate=YYYY-MM-DD&finalDate=YYYY-MM-DD
+### http://localhost:8080/api/reservation-periods/:numberOfReservation?startDate=YYYY-MM-DD&finalDate=YYYY-MM-DD
  - numberOfReservation:A number of a reservation registred
  - startDate: first date of the range pattern YYYY-MM-DD
  - finalDate: last date of the range pattern YYYY-MM-DD
@@ -51,4 +51,4 @@ To get a status of reservations should use:
  - numberOfReservation: number of reservation registred in data base
 
 To change a reservation should use:
-###http://localhost:8080/api/reservations/:numberOfReservation/alterations?startDate=YYYY-MM-DD&finalDate=YYYY-MM-DD
+### http://localhost:8080/api/reservations/:numberOfReservation/alterations?startDate=YYYY-MM-DD&finalDate=YYYY-MM-DD
