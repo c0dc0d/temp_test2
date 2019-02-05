@@ -1,4 +1,4 @@
-#MyCamp
+# MyCamp
 
 The project is built in Spring Boot technology, exposing the Rest API and H2 Database.
 
@@ -13,7 +13,7 @@ The endpoints expose are:
 
 To create a period available should use:
 Post Method:
-###http://localhost:8080/api/reservation-periods
+### http://localhost:8080/api/reservation-periods
 ```
 {
     "firstDateAvailable": "2019-03-01",
@@ -30,7 +30,7 @@ Get Method:
 
 To create a reservation:
 Post Method:
-###http://localhost:8080/api/reservations
+### http://localhost:8080/api/reservations
 Body Request example:
 ```
 {
@@ -43,11 +43,11 @@ Body Request example:
 }
 ```
 To cancel one reservation should use:
-###http://localhost:8080/api/reservations/:numberOfReservation/cancellations
+### http://localhost:8080/api/reservations/:numberOfReservation/cancellations
  - numberOfReservation: A number of reservation registred in data base
 
 To get a status of reservations should use:
-###http://localhost:8080/api/reservations/:numberOfReservation/status
+### http://localhost:8080/api/reservations/:numberOfReservation/status
  - numberOfReservation: number of reservation registred in data base
 
 To change a reservation should use:
