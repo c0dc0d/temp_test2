@@ -7,6 +7,10 @@ import java.time.LocalDate;
 
 public class UtilTest {
 
+    public static Reservation getEmptyReservation() {
+        return Reservation.builder().build();
+    }
+
     public static Reservation getReservationWithMoreThanThreeDays() {
         return Reservation.builder()
                 .arrivalDate(LocalDate.of(2019, 7, 3))
@@ -49,6 +53,13 @@ public class UtilTest {
                 .departureDate(LocalDate.of(2019, 7, 6))
                 .numberOfReservation("123zxc")
                 .statusReservation(StatusCodeReservation.CODE_STATUS_ACCEPT_RESERVATION)
+                .build();
+    }
+
+    public static ReservationPeriodAvailable getReservationPeriodAvailable() {
+        return ReservationPeriodAvailable.builder()
+                .firstDateAvailable(LocalDate.of(2019,7,1))
+                .finalDateAvailable(LocalDate.of(2019,7,1))
                 .build();
     }
 }

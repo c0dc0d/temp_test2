@@ -1,5 +1,6 @@
 package com.upgrade.campsite.mycamp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import javax.persistence.*;
 import java.io.Serializable;
@@ -33,4 +34,8 @@ public class Reservation implements Serializable {
 
     @Column(nullable = false)
     private String numberOfReservation;
+
+    @Transient
+    @JsonIgnore
+    private String numberOfOldReservation;
 }

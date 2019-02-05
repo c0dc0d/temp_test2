@@ -63,11 +63,17 @@ public class ReservationService {
             throw new BusinessException(String.format(THE_RESERVATION_WASNT_FOUND, numberOfReservation));
         }
         validationsReservations(arrivalDate, departureDate);
-        reservation.setArrivalDate(arrivalDate);
-        reservation.setDepartureDate(departureDate);
-        reservation.setStatusReservation(StatusCodeReservation.CODE_STATUS_PENDING_RESERVATION);
-        sendingQueueProcessingMessage(reservation);
-        return reservation;
+        Reservation newReservation = Reservation.builder()
+                .numberOfReservation(UUID.randomUUID().toString())
+                .arrivalDate(arrivalDate)
+                .departureDate(departureDate)
+                .user(reservation.getUser())
+                .statusReservation(StatusCodeReservation.CODE_STATUS_PENDING_RESERVATION)
+                .build();
+        reservationsRepository.save(newReservation);
+        newReservation.setNumberOfOldReservation(reservation.getNumberOfReservation());
+        sendingQueueProcessingMessage(newReservation);
+        return newReservation;
     }
 
     private void sendingQueueProcessingMessage(Reservation reservation) {

@@ -80,7 +80,7 @@ public class ReservationPeriodAvailableService {
     private void checkRangeInsideAvailablePeriodDate(LocalDate startDate, LocalDate finalDate) throws BusinessException {
         ReservationPeriodAvailable rpa = reservationPeriodAvailableRepository.findByStatusAvailable(STATUS_AVAILABLE);
         if(rpa == null) {
-            throw new BusinessException("Doesn't have any period available");
+            throw new BusinessException("There aren't any periods available");
         }
         if(!(startDate.equals(rpa.getFirstDateAvailable()) || startDate.isAfter(rpa.getFirstDateAvailable())) &&
                 (finalDate.equals(rpa.getFinalDateAvailable()) || startDate.isBefore(rpa.getFirstDateAvailable()))) {

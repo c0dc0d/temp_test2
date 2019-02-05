@@ -2,11 +2,13 @@ package com.upgrade.campsite.mycamp.controllers;
 
 import com.upgrade.campsite.mycamp.exceptions.BusinessException;
 import com.upgrade.campsite.mycamp.model.Reservation;
-import com.upgrade.campsite.mycamp.model.dtos.ReservationsAlterationDto;
 import com.upgrade.campsite.mycamp.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/reservations")
@@ -22,7 +24,7 @@ public class ReservationController {
                 .body(reservationService.sendProcessing(reservation));
     }
 
-    @PutMapping("/cancellations/{numberOfReservation}")
+    @PutMapping("/{numberOfReservation}/cancellations")
     public ResponseEntity cancelReservation(@PathVariable String numberOfReservation) throws BusinessException {
         return ResponseEntity.ok(reservationService.cancelReservation(numberOfReservation));
     }
@@ -37,12 +39,11 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.findStatusReservationAcceptance(numberOfReservation));
     }
 
-    @PutMapping("/alteration")
-    public ResponseEntity modidyReservation(@RequestBody ReservationsAlterationDto reservationsAlterationDto) throws BusinessException {
-        return ResponseEntity.accepted()
-                .body(reservationService
-                        .changeReservation(reservationsAlterationDto.getNumberOfReservation(),
-                                reservationsAlterationDto.getNewArrivalDate(), reservationsAlterationDto.getNewDepartureDate()));
+    @PutMapping("{numberOfReservation}/alterations")
+    public ResponseEntity modidyReservation(@PathVariable String numberOfReservation,
+                                            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate finalDate) throws BusinessException {
+        return ResponseEntity.accepted().body(reservationService.changeReservation(numberOfReservation, startDate, finalDate));
     }
 
 }

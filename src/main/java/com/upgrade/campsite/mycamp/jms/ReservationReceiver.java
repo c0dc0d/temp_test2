@@ -21,8 +21,11 @@ public class ReservationReceiver {
         if(numberOfReservations != null && numberOfReservations > 0) {
             reservationService.changeReservationsStatus(reservation, StatusCodeReservation.CODE_STATUS_DENIED_RESERVATION);
         }else {
+            if(reservation.getNumberOfOldReservation() != null) {
+                Reservation oldReservation = reservationService.findByNumberOfReservation(reservation.getNumberOfOldReservation());
+                reservationService.changeReservationsStatus(oldReservation, StatusCodeReservation.CODE_STATUS_CANCEL_RESERVATION);
+            }
             reservationService.changeReservationsStatus(reservation, StatusCodeReservation.CODE_STATUS_ACCEPT_RESERVATION);
         }
     }
-
 }
