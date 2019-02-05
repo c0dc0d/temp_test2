@@ -22,5 +22,13 @@ public interface ReservationRepository extends CrudRepository<Reservation, Long>
 
     Reservation findByNumberOfReservation(String numberOfReservation);
 
-    List<Reservation> findByStatusReservationOrderByArrivalDateAsc(String statusReservation);
+    @Query(" select rsv from Reservation rsv where rsv.statusReservation = :statusReservation " +
+            "and (rsv.arrivalDate >= :startDate or rsv.departureDate >= :startDate) " +
+            "and (rsv.departureDate <= :endDate or rsv.arrivalDate <= :endDate) " +
+            "order by rsv.arrivalDate asc")
+    List<Reservation> findByDateRangeAndStatusReservation(
+            @Param("statusReservation") String statusReservation,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
 }

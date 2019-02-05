@@ -4,7 +4,6 @@ import com.upgrade.campsite.mycamp.exceptions.BusinessException;
 import com.upgrade.campsite.mycamp.constants.StatusCodeReservation;
 import com.upgrade.campsite.mycamp.jms.ReservationReceiver;
 import com.upgrade.campsite.mycamp.model.Reservation;
-import com.upgrade.campsite.mycamp.model.ReservationPeriodAvailable;
 import com.upgrade.campsite.mycamp.model.dtos.ReservationsStatusDto;
 import com.upgrade.campsite.mycamp.repository.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,15 +23,12 @@ public class ReservationService {
     private static final String JMSX_GROUP_ID = "JMSXGroupID";
     private static final String MY_CAMP_QUEUE_GROUP_NAME = "MyCampGroupQueue";
     private static final int LIMIT_OF_DATE_FOR_RESERVATIONS = 3;
-    private static final int MINOR_LIMIT_OF_DAYS_TO_MAKE_RESERVATIONS = 2;
-    private static final int MAJOR_LIMIT_OF_DAYS_TO_MAKE_RESERVATIONS = 30;
+    private static final int MINIMUM_LIMIT_OF_DAYS_TO_MAKE_RESERVATIONS = 1;
+    private static final int MAXIMUM_LIMIT_OF_DAYS_TO_MAKE_RESERVATIONS = 30;
     private static final String THE_RESERVATION_WASNT_FOUND = "The reservation wasn't found: %s";
 
     @Autowired
     private ReservationRepository reservationsRepository;
-
-    @Autowired
-    private ReservationPeriodAvailableService reservationPeriodAvailableService;
 
     @Autowired
     private JmsTemplate jmsTemplate;
@@ -125,40 +121,30 @@ public class ReservationService {
     private void validationOfValidRageDateOfCamp(LocalDate arrivalDate, LocalDate departureDate) throws BusinessException {
         long days = Math.abs(ChronoUnit.DAYS.between(arrivalDate ,departureDate));
         if(days > LIMIT_OF_DATE_FOR_RESERVATIONS) {
-            throw new BusinessException("The reservations exceeded the limit of permanence");
+            throw new BusinessException("The reservation exceeded the limit of permanence");
         }
     }
 
     private void validationOfReservationCanDone(LocalDate arrivalDate, LocalDate departureDate) throws BusinessException {
-        ReservationPeriodAvailable availablePeriod =
-                reservationPeriodAvailableService.findAvailablePeriod(arrivalDate, departureDate);
-        long between = Math.abs(ChronoUnit.DAYS.between(availablePeriod.getFirstDateAvailable(), arrivalDate));
-        if(between < MINOR_LIMIT_OF_DAYS_TO_MAKE_RESERVATIONS) {
+        long between = Math.abs(ChronoUnit.DAYS.between(LocalDate.now(), arrivalDate));
+        if(between < MINIMUM_LIMIT_OF_DAYS_TO_MAKE_RESERVATIONS) {
             throw new BusinessException(
-                    String.format("The reservations exceeded the minor limit (minor limit: %d day ahead of arrival) to make reservations",
-                            MINOR_LIMIT_OF_DAYS_TO_MAKE_RESERVATIONS - 1));
+                    String.format("The reservation exceeded the minimum limit (minimum limit: %d day ahead of arrival) to make reservations",
+                            MINIMUM_LIMIT_OF_DAYS_TO_MAKE_RESERVATIONS));
         }
-        if(between > MAJOR_LIMIT_OF_DAYS_TO_MAKE_RESERVATIONS) {
+        if(between > MAXIMUM_LIMIT_OF_DAYS_TO_MAKE_RESERVATIONS) {
             throw new BusinessException(
-                    String.format("The reservations exceeded the major limit (major limit: %d days in advance) to make reservations",
-                            MAJOR_LIMIT_OF_DAYS_TO_MAKE_RESERVATIONS));
+                    String.format("The reservation exceeded the maximum limit (maximum limit: %d days in advance) to make reservations",
+                            MAXIMUM_LIMIT_OF_DAYS_TO_MAKE_RESERVATIONS));
         }
     }
 
     private void validationsReservations(LocalDate arrivalDate, LocalDate departureDate) throws BusinessException {
-        validationDatePeriodReservationAvailable(arrivalDate, departureDate);
         validationOfValidRageDateOfCamp(arrivalDate, departureDate);
         validationOfReservationCanDone(arrivalDate, departureDate);
     }
 
-    private void validationDatePeriodReservationAvailable(LocalDate arrivalDate, LocalDate departureDate) throws BusinessException {
-        ReservationPeriodAvailable availablePeriod = reservationPeriodAvailableService.findAvailablePeriod(arrivalDate, departureDate);
-        if(availablePeriod == null) {
-            throw new BusinessException("The period of reservation isn't available");
-        }
-    }
-
-    public List<Reservation> findReservationsAccepted() {
-        return reservationsRepository.findByStatusReservationOrderByArrivalDateAsc(StatusCodeReservation.CODE_STATUS_ACCEPT_RESERVATION);
+    public List<Reservation> findByDateRangeAndStatusReservation(String statusReservaion, LocalDate startDate, LocalDate endDate) {
+        return reservationsRepository.findByDateRangeAndStatusReservation(statusReservaion, startDate, endDate);
     }
 }

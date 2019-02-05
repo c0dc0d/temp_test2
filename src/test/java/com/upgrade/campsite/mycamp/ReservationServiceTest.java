@@ -5,7 +5,6 @@ import com.upgrade.campsite.mycamp.exceptions.BusinessException;
 import com.upgrade.campsite.mycamp.model.Reservation;
 import com.upgrade.campsite.mycamp.model.dtos.ReservationsStatusDto;
 import com.upgrade.campsite.mycamp.repository.ReservationRepository;
-import com.upgrade.campsite.mycamp.service.ReservationPeriodAvailableService;
 import com.upgrade.campsite.mycamp.service.ReservationService;
 import com.upgrade.campsite.mycamp.utils.UtilTest;
 import org.junit.Test;
@@ -33,43 +32,27 @@ public class ReservationServiceTest {
     private ReservationRepository reservationRepository;
 
     @Mock
-    private ReservationPeriodAvailableService reservationPeriodAvailableService;
-
-    @Mock
     private JmsTemplate jmsTemplate;
 
     @Test
-    public void Should_ThrowNotFoundPeriodReservation_When_ThereInstPeriodAvailable() {
-        try {
-            reservationService.sendProcessing(UtilTest.getReservationWithJulyThreeDays());
-        } catch (BusinessException e) {
-            assertEquals("The period of reservation isn't available", e.getMessage());
-            return;
-        }
-        fail("Didn't throw the exception expected.");
-    }
-
-    @Test
     public void Should_ThrowLimitOfPermanenceException_When_DaysOfPermanenceIsMoreThanThreeDays() {
-        when(reservationPeriodAvailableService
-                .findAvailablePeriod(any(), any())).thenReturn(UtilTest.getPeriodAvailable());
         try {
             reservationService.sendProcessing(UtilTest.getReservationWithMoreThanThreeDays());
         } catch (BusinessException e) {
-            assertEquals("The reservations exceeded the limit of permanence", e.getMessage());
+            assertEquals("The reservation exceeded the limit of permanence", e.getMessage());
             return;
         }
         fail("Didn't throw the exception expected.");
     }
 
     @Test
-    public void Should_ThrowMinorLimitOfDoReservation_When_TryDoReservationsSameDaysOfArrival() {
-        when(reservationPeriodAvailableService
-                .findAvailablePeriod(any(), any())).thenReturn(UtilTest.getPeriodAvailable());
+    public void Should_ThrowMinimumLimitOfDoReservation_When_TryDoReservationsSameDaysOfArrival() {
         try {
-            reservationService.sendProcessing(UtilTest.getReservationArrivalDateSameFirstDatePeriodAvailable());
+            reservationService.sendProcessing(Reservation.builder()
+                            .arrivalDate(LocalDate.now())
+                            .departureDate(LocalDate.now().plusDays(2)).build());
         } catch (BusinessException e) {
-            assertEquals("The reservations exceeded the minor limit (minor limit: 1 day ahead of arrival) to make reservations",
+            assertEquals("The reservation exceeded the minimum limit (minimum limit: 1 day ahead of arrival) to make reservations",
                     e.getMessage());
             return;
         }
@@ -77,13 +60,13 @@ public class ReservationServiceTest {
     }
 
     @Test
-    public void Should_ThrowMajorLimitOfDoReservation_When_TryDoReservationsMoreThanThirtyDays() {
-        when(reservationPeriodAvailableService
-                .findAvailablePeriod(any(), any())).thenReturn(UtilTest.getPeriodAvailable());
+    public void Should_ThrowMaximumLimitOfDoReservation_When_TryDoReservationsMoreThanThirtyDays() {
         try {
-            reservationService.sendProcessing(UtilTest.getReservationThreeDaysInMay());
+            reservationService.sendProcessing(Reservation.builder()
+                    .arrivalDate(LocalDate.now().minusDays(35))
+                    .departureDate(LocalDate.now().minusDays(37)).build());
         } catch (BusinessException e) {
-            assertEquals("The reservations exceeded the major limit (major limit: 30 days in advance) to make reservations",
+            assertEquals("The reservation exceeded the maximum limit (maximum limit: 30 days in advance) to make reservations",
                     e.getMessage());
             return;
         }
@@ -92,9 +75,11 @@ public class ReservationServiceTest {
 
     @Test
     public void Should_CreateReservation_When_ArrivalDateAndDepartureDateIsAvailable() throws BusinessException {
-        when(reservationPeriodAvailableService
-                .findAvailablePeriod(any(), any())).thenReturn(UtilTest.getPeriodAvailable());
-        Reservation reservation = reservationService.sendProcessing(UtilTest.getReservationWithJulyThreeDays());
+        Reservation reservation = reservationService.sendProcessing(
+                Reservation.builder()
+                        .arrivalDate(LocalDate.now().plusDays(1))
+                        .departureDate(LocalDate.now().plusDays(3)).build()
+        );
         assertNotNull(reservation);
         assertNotNull(reservation.getNumberOfReservation());
         assertEquals(StatusCodeReservation.CODE_STATUS_PENDING_RESERVATION, reservation.getStatusReservation());
@@ -119,12 +104,13 @@ public class ReservationServiceTest {
 
     @Test
     public void Should_ChangeReservationWithNewDatesAndPending_When_ChangeReservation() throws BusinessException {
-        when(reservationPeriodAvailableService
-                .findAvailablePeriod(any(), any())).thenReturn(UtilTest.getPeriodAvailable());
         String numberOfReservation = "123zxc";
-        LocalDate newArrivalDate = LocalDate.of(2019, 7, 8);
-        LocalDate newDepartureDate = LocalDate.of(2019, 7, 11);
-        Reservation reservationWithNumberOfReservation = UtilTest.getReservationWithNumberOfReservation();
+        LocalDate newArrivalDate = LocalDate.now().plusDays(5);
+        LocalDate newDepartureDate = LocalDate.now().plusDays(7);
+        Reservation reservationWithNumberOfReservation =
+                Reservation.builder()
+                    .arrivalDate(LocalDate.now().plusDays(1))
+                    .departureDate(LocalDate.now().plusDays(2)).build();
         when(reservationRepository.findByNumberOfReservation(any()))
                 .thenReturn(reservationWithNumberOfReservation);
         Reservation newReservation = reservationService
