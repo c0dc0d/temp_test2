@@ -1,0 +1,170 @@
+{
+	"variables": [],
+	"info": {
+		"name": "MyCamp",
+		"_postman_id": "a0a95ed3-0f17-ad3d-ce5e-44c383b14486",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "localhost:8080/api/reservations",
+			"request": {
+				"url": "localhost:8080/api/reservations",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"arrivalDate\":\"2019-03-06\",\n\t\"departureDate\":\"2019-03-09\",\n\t\"user\":{\n\t\t\"fullName\": \"igor Soares de Freitas\",\n\t\t\"email\": \"igorsfreitas@gmail.com\"\n\t}\n}"
+				},
+				"description": "To create reservations"
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/api/reservations/:numberOfReservation/status",
+			"request": {
+				"url": {
+					"raw": "localhost:8080/api/reservations/:numberOfReservation/status",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"reservations",
+						":numberOfReservation",
+						"status"
+					],
+					"query": [],
+					"variable": [
+						{
+							"key": "numberOfReservation",
+							"value": "b7c6b4df-001b-4c15-9525-26a54ae07862"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "To get the status of reservations, to further frontend"
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/api/reservations/:numberOfReservation/cancellations",
+			"request": {
+				"url": {
+					"raw": "localhost:8080/api/reservations/:numberOfReservation/cancellations",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"reservations",
+						":numberOfReservation",
+						"cancellations"
+					],
+					"query": [],
+					"variable": [
+						{
+							"key": "numberOfReservation",
+							"value": "5203459c-7e45-43c9-ba88-653faaed7346"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {},
+				"description": "To cancelations of reservaions"
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/api/reservation-periods?startDate=2019-02-01&endDate=2019-02-28",
+			"request": {
+				"url": {
+					"raw": "localhost:8080/api/reservation-periods?startDate=2019-02-01&endDate=2019-02-28",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"reservation-periods"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2019-02-01",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "endDate",
+							"value": "2019-02-28",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "To get a available period"
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/api/reservations/:numberOfReservation/alterations?startDate=2019-02-10&finalDate=2019-02-13",
+			"request": {
+				"url": {
+					"raw": "localhost:8080/api/reservations/:numberOfReservation/alterations?startDate=2019-02-10&finalDate=2019-02-13",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"reservations",
+						":numberOfReservation",
+						"alterations"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2019-02-10",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "finalDate",
+							"value": "2019-02-13",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": [
+						{
+							"key": "numberOfReservation",
+							"value": "b2ce060d-3499-4158-96c1-90a729eb092a"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {},
+				"description": "To alterations of reservations"
+			},
+			"response": []
+		}
+	]
+}
