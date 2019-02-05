@@ -9,9 +9,9 @@ To run the project can run:
 mvn spring-boot:run
 ```
 
-##The endpoints exposes are:
+## The endpoints exposes are:
 
-####To find a period available should use:
+#### To find a period available should use:
 Get Method: 
 http://localhost:8080/api/reservation-periods?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD
  - startDate: first date of the range pattern YYYY-MM-DD
@@ -32,7 +32,7 @@ Body Request example:
     }
 }
 ```
-####To cancel one reservation should use:
+#### To cancel one reservation should use:
 
 Put method:
 http://localhost:8080/api/reservations/:numberOfReservation/cancellations
