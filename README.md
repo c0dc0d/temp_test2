@@ -52,3 +52,7 @@ To get a status of reservations should use:
 
 To change a reservation should use:
 ### http://localhost:8080/api/reservations/:numberOfReservation/alterations?startDate=YYYY-MM-DD&finalDate=YYYY-MM-DD
+
+## Acknowledgments
+
+In the folder /jmeter there is a script to test the queue processing and concurrency.
