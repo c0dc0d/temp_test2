@@ -125,7 +125,7 @@ public class ReservationService {
         }
     }
 
-    private void validationOfReservationCanDone(LocalDate arrivalDate, LocalDate departureDate) throws BusinessException {
+    private void validationOfReservationCanDone(LocalDate arrivalDate) throws BusinessException {
         long between = Math.abs(ChronoUnit.DAYS.between(LocalDate.now(), arrivalDate));
         if(between < MINIMUM_LIMIT_OF_DAYS_TO_MAKE_RESERVATIONS) {
             throw new BusinessException(
@@ -141,7 +141,7 @@ public class ReservationService {
 
     private void validationsReservations(LocalDate arrivalDate, LocalDate departureDate) throws BusinessException {
         validationOfValidRageDateOfCamp(arrivalDate, departureDate);
-        validationOfReservationCanDone(arrivalDate, departureDate);
+        validationOfReservationCanDone(arrivalDate);
     }
 
     public List<Reservation> findByDateRangeAndStatusReservation(String statusReservaion, LocalDate startDate, LocalDate endDate) {
